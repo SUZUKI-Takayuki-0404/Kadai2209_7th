@@ -3,6 +3,7 @@ package practice.kadai2209_7th;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +21,17 @@ import java.util.*;
 public class AirportController {
     Map<String, List<String>> yourAirportMap = new HashMap<>();
 
+    private final String notFoundMessage = "not found";
+
     private boolean hasAirportList = false;
+
     @Autowired
     private PortNumber portNum;
 
     @Autowired
     private AirportService service;
 
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @GetMapping("/airports")
     public String getAirportList() {
 
@@ -40,93 +45,151 @@ public class AirportController {
         return "You have the list of airports";
     }
 
+
+    @ResponseStatus(code = HttpStatus.OK)
     @GetMapping("/search")
-    public ResponseEntity<List<String>> getAirports(
-            @RequestParam(value = "airportCode"/*, defaultValue = "KIX"*/) @Size(min = 3, max = 3, message = "Number of letters has to be 3")
-            String airportCode) {
+    public ResponseEntity<Map<String, Object>> getAirportMap(
+            @RequestParam(value = "airportCode", defaultValue = "NRT") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode) {
+
+        List<String> airportInfoList;
+
+        Map<String, Object> searchedAirportMap = new LinkedHashMap<>();
 
         if (yourAirportMap.isEmpty()) {
 
-            return ResponseEntity.ok(List.of("At first, go to ", "http://localhost:" + portNum.getPortNum() + "/airports"));
+            searchedAirportMap.put("message : ", "At first, go to http://localhost:" + portNum.getPortNum() + "/airports");
+
+            return ResponseEntity.ok(searchedAirportMap);
         }
 
-        return ResponseEntity.ok(yourAirportMap.getOrDefault(airportCode, List.of(airportCode, " does not exist")));
+        airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(notFoundMessage, notFoundMessage));
+
+        searchedAirportMap.put("message : ", "A search completed");
+        searchedAirportMap.put("airport : ", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+
+        return ResponseEntity.ok(searchedAirportMap);
 
     }
 
 
+    @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping("/create")
-    public ResponseEntity<String> createAirport(
+    public ResponseEntity<Map<String, Object>> createAirport(
             @RequestParam(value = "airportCode", defaultValue = "NKM") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode,
             @RequestParam(value = "airportName", defaultValue = "NAGOYA") @NotBlank(message = "Airport Name is required field") String airportName,
             @RequestParam(value = "country", defaultValue = "JAPAN") @NotBlank(message = "Country is required field") String country) {
 
+        List<String> airportInfoList;
+
+        Map<String, Object> createdAirportMap = new LinkedHashMap<>();
+
         if (yourAirportMap.isEmpty()) {
 
-            return ResponseEntity.ok("At first, go to " + "http://localhost:" + portNum.getPortNum() + "/airports");
+            createdAirportMap.put("message : ", "At first, go to http://localhost:" + portNum.getPortNum() + "/airports");
+
+            return ResponseEntity.ok(createdAirportMap);
         }
 
-        if (yourAirportMap.get(airportCode) != null) {
+        airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(notFoundMessage, notFoundMessage));
 
-            return ResponseEntity.ok(airportCode + " already exists");
+        if (airportInfoList.get(0).equals(notFoundMessage)) {
+
+            yourAirportMap.put(airportCode, Arrays.asList(airportName, country));
+
+            createdAirportMap.put("message : ", "Successfully created");
+            createdAirportMap.put("airport : ", new AirportEntity(airportCode, airportName, country));
+
+            URI url = UriComponentsBuilder.fromUriString("http://localhost:" + portNum.getPortNum())
+                    .path("/create/" + airportCode)
+                    .build()
+                    .toUri();
 
         } else {
 
-            yourAirportMap.putIfAbsent(airportCode, Arrays.asList(airportName, country));
+            createdAirportMap.put("message : ", "Already exists as below, Input an unused Airport Code");
+            createdAirportMap.put("airport : ", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+
         }
 
-        URI url = UriComponentsBuilder.fromUriString("http://localhost:" + portNum.getPortNum())
-                .path("/create/" + airportCode)
-                .build()
-                .toUri();
-
-        return ResponseEntity.created(url).body(airportCode + ", " + airportName + ", " + country + " : successfully created");
+        return ResponseEntity.ok(createdAirportMap);
     }
 
 
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @PatchMapping("/update/{airportCode}")
-    public ResponseEntity<Map<String, String>> updateAirport(
+    public ResponseEntity<Map<String, Object>> updateAirport(
             @PathVariable("airportCode") @NotNull String airportCode,
             @RequestParam("airportName") @NotBlank(message = "Airport Name is required field") String airportName,
             @RequestParam("country") @NotBlank(message = "Country is required field") String country) {
 
+        List<String> airportInfoList;
+
+        Map<String, Object> updatedAirportMap = new LinkedHashMap<>();
+
         if (yourAirportMap.isEmpty()) {
-            return ResponseEntity.ok(Map.of("At first, go to ", "http://localhost:" + portNum.getPortNum() + "/airports"));
+
+            updatedAirportMap.put("message : ", "At first, go to http://localhost:" + portNum.getPortNum() + "/airports");
+
+            return ResponseEntity.ok(updatedAirportMap);
+
         }
 
-        List<String> airportInfo = yourAirportMap.get(airportCode);
+        airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(notFoundMessage, notFoundMessage));
 
-        if (airportInfo == null) {
+        if (airportInfoList.get(0).equals(notFoundMessage)) {
 
-            return ResponseEntity.ok(Map.of(airportCode, "does not exist"));
+            updatedAirportMap.put("message : ", "Input an existing Airport Code in the list of data");
+            updatedAirportMap.put("airport : ", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
 
         } else {
 
-            String airportInfoBefore = String.join(", ", airportInfo);
-
             yourAirportMap.put(airportCode, Arrays.asList(airportName, country));
 
-            return ResponseEntity.ok(Map.of("Was: " + airportInfoBefore,
-                    "IS: " + String.join(", ", yourAirportMap.get(airportCode)) + " Successfully updated"));
+            updatedAirportMap.put("message : ", "Successfully created");
+            updatedAirportMap.put("before  : ", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+            updatedAirportMap.put("after   : ", new AirportEntity(airportCode, airportName, country));
+
         }
+
+        return ResponseEntity.ok(updatedAirportMap);
 
     }
 
 
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete/{airportCode}")
-    public ResponseEntity<Map<String, String>> deleteAirport(
+    public ResponseEntity<Map<String, Object>> deleteAirport(
             @PathVariable("airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3")
             String airportCode) {
 
+        List<String> airportInfoList;
+
+        Map<String, Object> deletedAirportMap = new LinkedHashMap<>();
+
         if (yourAirportMap.isEmpty()) {
-            return ResponseEntity.ok(Map.of("At first, go to ", "http://localhost:" + portNum.getPortNum() + "/airports in advance"));
+
+            deletedAirportMap.put("message : ", "At first, go to http://localhost:" + portNum.getPortNum() + "/airports");
+
+            return ResponseEntity.ok(deletedAirportMap);
+
         }
 
-        if (yourAirportMap.get(airportCode) == null) {
-            return ResponseEntity.ok(Map.of(airportCode, "does not exist"));
+        airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(notFoundMessage, notFoundMessage));
+
+        if (airportInfoList.get(0).equals(notFoundMessage)) {
+
+            deletedAirportMap.put("message : ", "Input an existing Airport Code in the list of data");
+            deletedAirportMap.put("airport : ", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+
+        } else {
+
+            yourAirportMap.remove(airportCode);
+
+            deletedAirportMap.put("message : ", "Successfully deleted");
+
         }
 
-        yourAirportMap.remove(airportCode);
-        return ResponseEntity.ok(Map.of("Airport Code: ", airportCode + " has been successfully deleted"));
+        return ResponseEntity.ok(deletedAirportMap);
+
     }
 }
