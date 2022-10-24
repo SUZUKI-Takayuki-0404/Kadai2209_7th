@@ -103,11 +103,6 @@ public class AirportController {
 
         } else {
 
-//            createdAirportMap.put("message : ", "Already exists as below, Input an unused Airport Code");
-//            createdAirportMap.put("airport : ", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
-//
-//            return ResponseEntity.ok(createdAirportMap);
-
             return ResponseEntity.noContent().build();
 
         }
@@ -128,11 +123,6 @@ public class AirportController {
         Map<String, Object> updatedAirportMap = new LinkedHashMap<>();
 
         if (airportInfoList.get(0).equals(notFoundMessage) || airportInfoList.equals(List.of(airportName, country))) {
-
-//            updatedAirportMap.put("message : ", "Input an existing Airport Code in the list of data");
-//            updatedAirportMap.put("airport : ", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
-
-//            return ResponseEntity.ok(updatedAirportMap);
 
             return ResponseEntity.noContent().build();
 
@@ -164,10 +154,6 @@ public class AirportController {
 
         if (airportInfoList.get(0).equals(notFoundMessage)) {
 
-//            deletedAirportMap.put("message : ", "Input an existing Airport Code in the list of data");
-//            deletedAirportMap.put("airport : ", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
-//
-//            return ResponseEntity.ok(deletedAirportMap);
             return ResponseEntity.noContent().build();
 
         } else {
