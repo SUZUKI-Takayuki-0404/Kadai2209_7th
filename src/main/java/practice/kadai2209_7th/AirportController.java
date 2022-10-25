@@ -42,8 +42,8 @@ public class AirportController {
         airportCodeList = service.getAllAirportCode();
 
         Map<String, Object> airportCodeMap = new LinkedHashMap<>();
-        airportCodeMap.put("message : ", "You have airport codes listed below");
-        airportCodeMap.put("airport : ", airportCodeList);
+        airportCodeMap.put("message", "You have airport codes listed below");
+        airportCodeMap.put("airport", airportCodeList);
 
         return airportCodeMap;
     }
@@ -59,18 +59,10 @@ public class AirportController {
 
         Map<String, Object> searchedAirportMap = new LinkedHashMap<>();
 
-        if (airportInfoList.get(0).equals(notFoundMessage)) {
+        searchedAirportMap.put("message", "A search completed");
+        searchedAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
 
-            return ResponseEntity.noContent().build();
-
-        } else {
-
-            searchedAirportMap.put("message : ", "A search completed");
-            searchedAirportMap.put("airport : ", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
-
-            return ResponseEntity.ok(searchedAirportMap);
-
-        }
+        return ResponseEntity.ok(searchedAirportMap);
 
     }
 
@@ -91,8 +83,8 @@ public class AirportController {
 
             yourAirportMap.put(airportCode, Arrays.asList(airportName, country));
 
-            createdAirportMap.put("message : ", "Successfully created");
-            createdAirportMap.put("airport : ", new AirportEntity(airportCode, airportName, country));
+            createdAirportMap.put("message", "Successfully created");
+            createdAirportMap.put("airport", new AirportEntity(airportCode, airportName, country));
 
             URI url = UriComponentsBuilder.fromUriString("http://localhost:" + portNum.getPortNum())
                     .path("/create/" + airportCode)
@@ -103,7 +95,10 @@ public class AirportController {
 
         } else {
 
-            return ResponseEntity.noContent().build();
+            createdAirportMap.put("message", "Already exists as below, Input an unused Airport Code");
+            createdAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+
+            return ResponseEntity.accepted().body(createdAirportMap);
 
         }
 
@@ -122,7 +117,13 @@ public class AirportController {
 
         Map<String, Object> updatedAirportMap = new LinkedHashMap<>();
 
-        if (airportInfoList.get(0).equals(notFoundMessage) || airportInfoList.equals(List.of(airportName, country))) {
+        if (airportInfoList.get(0).equals(notFoundMessage)) {
+
+            updatedAirportMap.put("message", "Input an existing Airport Code in the list of data");
+
+            return ResponseEntity.accepted().body(updatedAirportMap);
+
+        } else if (airportInfoList.equals(List.of(airportName, country))) {
 
             return ResponseEntity.noContent().build();
 
@@ -130,9 +131,9 @@ public class AirportController {
 
             yourAirportMap.put(airportCode, Arrays.asList(airportName, country));
 
-            updatedAirportMap.put("message : ", "Successfully created");
-            updatedAirportMap.put("before  : ", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
-            updatedAirportMap.put("after   : ", new AirportEntity(airportCode, airportName, country));
+            updatedAirportMap.put("message", "Successfully updated");
+            updatedAirportMap.put("before", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+            updatedAirportMap.put("after", new AirportEntity(airportCode, airportName, country));
 
             return ResponseEntity.ok(updatedAirportMap);
 
@@ -154,13 +155,15 @@ public class AirportController {
 
         if (airportInfoList.get(0).equals(notFoundMessage)) {
 
-            return ResponseEntity.noContent().build();
+            deletedAirportMap.put("message", "Input an existing Airport Code in the list of data");
+
+            return ResponseEntity.accepted().body(deletedAirportMap);
 
         } else {
 
             yourAirportMap.remove(airportCode);
 
-            deletedAirportMap.put("message : ", "Successfully deleted");
+            deletedAirportMap.put("message", "Successfully deleted");
 
             return ResponseEntity.ok(deletedAirportMap);
 
