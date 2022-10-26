@@ -1,7 +1,6 @@
 package practice.kadai2209_7th;
 
 
-import jdk.jshell.Snippet;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
