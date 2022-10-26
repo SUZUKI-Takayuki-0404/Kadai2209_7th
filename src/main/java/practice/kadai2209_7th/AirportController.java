@@ -1,6 +1,7 @@
 package practice.kadai2209_7th;
 
 
+import jdk.jshell.Snippet;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,12 +59,18 @@ public class AirportController {
         List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(notFoundMessage, notFoundMessage));
 
         Map<String, Object> searchedAirportMap = new LinkedHashMap<>();
-
         searchedAirportMap.put("message", "A search completed");
         searchedAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
 
-        return ResponseEntity.ok(searchedAirportMap);
+        if (airportInfoList.get(0).equals(notFoundMessage)) {
 
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(searchedAirportMap);
+
+        } else {
+
+            return ResponseEntity.ok(searchedAirportMap);
+
+        }
     }
 
 
@@ -98,7 +105,7 @@ public class AirportController {
             createdAirportMap.put("message", "Already exists as below, Input an unused Airport Code");
             createdAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
 
-            return ResponseEntity.accepted().body(createdAirportMap);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(createdAirportMap);
 
         }
 
@@ -121,11 +128,13 @@ public class AirportController {
 
             updatedAirportMap.put("message", "Input an existing Airport Code in the list of data");
 
-            return ResponseEntity.accepted().body(updatedAirportMap);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(updatedAirportMap);
 
         } else if (airportInfoList.equals(List.of(airportName, country))) {
 
-            return ResponseEntity.noContent().build();
+            updatedAirportMap.put("message", "The same Airport Name and Country as they are now");
+
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(updatedAirportMap);
 
         } else {
 
@@ -157,15 +166,13 @@ public class AirportController {
 
             deletedAirportMap.put("message", "Input an existing Airport Code in the list of data");
 
-            return ResponseEntity.accepted().body(deletedAirportMap);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deletedAirportMap);
 
         } else {
 
             yourAirportMap.remove(airportCode);
 
-            deletedAirportMap.put("message", "Successfully deleted");
-
-            return ResponseEntity.ok(deletedAirportMap);
+            return ResponseEntity.noContent().build();
 
         }
     }
