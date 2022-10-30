@@ -20,11 +20,8 @@ import java.util.*;
 @RequestMapping("/airports")
 public class AirportController {
 
-    List<String> airportCodeList = new ArrayList<>();
 
-    Map<String, List<String>> yourAirportMap = new HashMap<>();
-
-    private final String notFoundMessage = "not found";
+    private final String NOT_FOUND_MESSAGE = "not found";
 
     @Autowired
     private PortNumber portNum;
@@ -32,17 +29,15 @@ public class AirportController {
     @Autowired
     private AirportService service;
 
-    AirportAllData airportAllData = new AirportAllData();
-
 
     @ResponseStatus(code = HttpStatus.OK)
     @GetMapping("/airports")
     public Map<String, Object> getAirportList() {
 
-        airportCodeList = service.getAllAirportCode();
+        List<String> airportCodeList = service.getAllAirportCode();
 
         Map<String, Object> airportCodeMap = new LinkedHashMap<>();
-        airportCodeMap.put("message", "You have airport codes listed below");
+        airportCodeMap.put("message", "You have airport codes listed here");
         airportCodeMap.put("airport", airportCodeList);
 
         return airportCodeMap;
@@ -51,17 +46,19 @@ public class AirportController {
 
     @GetMapping("/search")
     public ResponseEntity<Map<String, Object>> getAirportMap(
-            @RequestParam(value = "airportCode", defaultValue = "NRT") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode) {
+            @RequestParam(value = "airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode) {
 
+        AirportAllData airportAllData = new AirportAllData();
+        Map<String, List<String>> yourAirportMap = new HashMap<>();
         yourAirportMap = airportAllData.getAirportAllData(yourAirportMap, service);
 
-        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(notFoundMessage, notFoundMessage));
+        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
 
         Map<String, Object> searchedAirportMap = new LinkedHashMap<>();
         searchedAirportMap.put("message", "A search completed");
         searchedAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
 
-        if (airportInfoList.get(0).equals(notFoundMessage)) {
+        if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(searchedAirportMap);
 
@@ -75,17 +72,19 @@ public class AirportController {
 
     @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> createAirport(
-            @RequestParam(value = "airportCode", defaultValue = "NKM") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode,
-            @RequestParam(value = "airportName", defaultValue = "NAGOYA") @NotBlank(message = "Airport Name is required field") String airportName,
-            @RequestParam(value = "country", defaultValue = "JAPAN") @NotBlank(message = "Country is required field") String country) {
+            @RequestParam(value = "airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode,
+            @RequestParam(value = "airportName") @NotBlank(message = "Airport Name is required field") String airportName,
+            @RequestParam(value = "country") @NotBlank(message = "Country is required field") String country) {
 
+        AirportAllData airportAllData = new AirportAllData();
+        Map<String, List<String>> yourAirportMap = new HashMap<>();
         yourAirportMap = airportAllData.getAirportAllData(yourAirportMap, service);
 
-        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(notFoundMessage, notFoundMessage));
+        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
 
         Map<String, Object> createdAirportMap = new LinkedHashMap<>();
 
-        if (airportInfoList.get(0).equals(notFoundMessage)) {
+        if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
 
             yourAirportMap.put(airportCode, Arrays.asList(airportName, country));
 
@@ -117,13 +116,15 @@ public class AirportController {
             @RequestParam("airportName") @NotBlank(message = "Airport Name is required field") String airportName,
             @RequestParam("country") @NotBlank(message = "Country is required field") String country) {
 
+        Map<String, List<String>> yourAirportMap = new HashMap<>();
+        AirportAllData airportAllData = new AirportAllData();
         yourAirportMap = airportAllData.getAirportAllData(yourAirportMap, service);
 
-        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(notFoundMessage, notFoundMessage));
+        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
 
         Map<String, Object> updatedAirportMap = new LinkedHashMap<>();
 
-        if (airportInfoList.get(0).equals(notFoundMessage)) {
+        if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
 
             updatedAirportMap.put("message", "Input an existing Airport Code in the list of data");
 
@@ -155,13 +156,15 @@ public class AirportController {
             @PathVariable("airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3")
             String airportCode) {
 
+        Map<String, List<String>> yourAirportMap = new HashMap<>();
+        AirportAllData airportAllData = new AirportAllData();
         yourAirportMap = airportAllData.getAirportAllData(yourAirportMap, service);
 
-        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(notFoundMessage, notFoundMessage));
+        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
 
         Map<String, Object> deletedAirportMap = new LinkedHashMap<>();
 
-        if (airportInfoList.get(0).equals(notFoundMessage)) {
+        if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
 
             deletedAirportMap.put("message", "Input an existing Airport Code in the list of data");
 
