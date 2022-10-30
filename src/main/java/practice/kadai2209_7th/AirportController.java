@@ -34,7 +34,7 @@ public class AirportController {
     @GetMapping("/airports")
     public Map<String, Object> getAirportList() {
 
-        List<String> airportCodeList = service.getAllAirportCode();
+        List<String> airportCodeList = service.getAllAirportCodeList();
 
         Map<String, Object> airportCodeMap = new LinkedHashMap<>();
         airportCodeMap.put("message", "You have airport codes listed here");
@@ -56,7 +56,7 @@ public class AirportController {
 
         Map<String, Object> searchedAirportMap = new LinkedHashMap<>();
         searchedAirportMap.put("message", "A search completed");
-        searchedAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+        searchedAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)).toString());
 
         if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
 
@@ -74,7 +74,8 @@ public class AirportController {
     public ResponseEntity<Map<String, Object>> createAirport(
             @RequestParam(value = "airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode,
             @RequestParam(value = "airportName") @NotBlank(message = "Airport Name is required field") String airportName,
-            @RequestParam(value = "country") @NotBlank(message = "Country is required field") String country) {
+            @RequestParam(value = "country") @NotBlank(message = "Country is required field") String country,
+            UriComponentsBuilder uriBuilder) {
 
         AirportAllData airportAllData = new AirportAllData();
         Map<String, List<String>> yourAirportMap = new HashMap<>();
@@ -91,7 +92,7 @@ public class AirportController {
             createdAirportMap.put("message", "Successfully created");
             createdAirportMap.put("airport", new AirportEntity(airportCode, airportName, country));
 
-            URI url = UriComponentsBuilder.fromUriString("http://localhost:" + portNum.getPortNum())
+            URI url = uriBuilder
                     .path("/create/" + airportCode)
                     .build()
                     .toUri();
