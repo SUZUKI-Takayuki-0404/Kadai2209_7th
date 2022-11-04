@@ -1,38 +1,20 @@
 package practice.kadai2209_7th;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 
-public class AirportDataMap {
+public class AirportDataMemo {
 
     private Map<String, List<String>> airportAllDataMap;
 
-    public Map<String, List<String>> getAirportAllData(@NotNull Map<String, List<String>> currentAirportAllData, AirportService service) {
-
-        if (currentAirportAllData.isEmpty()) {
-
-            return service.getAllDataMap();
-
-        } else {
-
-            return currentAirportAllData;
-
-        }
-    }
-
-
-    public Map<String, List<String>> getAirportDataMap(AirportService service) {
+    public Map<String, List<String>> getAirportAllData(AirportService service) {
 
         if (this.airportAllDataMap == null) {
 
             this.airportAllDataMap = service.getAllDataMap();
 
         }
-
         return this.airportAllDataMap;
 
     }
@@ -45,17 +27,11 @@ public class AirportDataMap {
     }
 
 
-    public boolean removeFromAirportDataMap(String airportCode, List<String> airportNameAndCountry) {
+    public void removeFromAirportDataMap(String airportCode) {
 
-        if (this.airportAllDataMap.get(airportCode) == null) {
-
-            return false;
-
-        } else {
+        if (this.airportAllDataMap.get(airportCode) != null) {
 
             this.airportAllDataMap.remove(airportCode);
-
-            return true;
 
         }
     }
