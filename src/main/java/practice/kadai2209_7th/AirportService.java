@@ -26,7 +26,7 @@ public class AirportService {
         return new AirportEntity(airportCode, airportName, country);
     }
 
-    public List<String> getAllAirportCode() {
+    public List<String> getAllAirportCodeList() {
 
         return repository.findAllCode();
     }
