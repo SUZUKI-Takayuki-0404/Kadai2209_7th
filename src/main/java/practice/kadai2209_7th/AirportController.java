@@ -26,8 +26,6 @@ public class AirportController {
     @Autowired
     private AirportService service;
 
-    AirportDataMemo airportDataMemo = new AirportDataMemo();
-
 
     @ResponseStatus(code = HttpStatus.OK)
     @GetMapping("/airports")
@@ -52,7 +50,7 @@ public class AirportController {
         //Body of ResponseEntity
         Map<String, AirportEntity> searchedAirportMap = new HashMap<>();
 
-        Map<String, List<String>> yourAirportMap = airportDataMemo.getAirportAllData(service);
+        Map<String, List<String>> yourAirportMap = service.getAllDataMap();
 
         List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
 
@@ -80,13 +78,13 @@ public class AirportController {
         //Body of ResponseEntity
         Map<String, AirportEntity> createdAirportMap = new HashMap<>();
 
-        Map<String, List<String>> yourAirportMap = airportDataMemo.getAirportAllData(service);
+        Map<String, List<String>> yourAirportMap = service.getAllDataMap();
 
         List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
 
         if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
 
-            airportDataMemo.putIntoAirportDataMap(airportCode, Arrays.asList(airportName, country));
+            yourAirportMap.put(airportCode, Arrays.asList(airportName, country));
             createdAirportMap.put("airport", new AirportEntity(airportCode, airportName, country));
 
             URI url = uriBuilder
@@ -117,7 +115,7 @@ public class AirportController {
         //Body of ResponseEntity
         Map<String, AirportEntity> updatedAirportMap = new LinkedHashMap<>();
 
-        Map<String, List<String>> yourAirportMap = airportDataMemo.getAirportAllData(service);
+        Map<String, List<String>> yourAirportMap = service.getAllDataMap();
 
         List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
 
@@ -137,7 +135,7 @@ public class AirportController {
 
         } else {
 
-            airportDataMemo.putIntoAirportDataMap(airportCode, Arrays.asList(airportName, country));
+            yourAirportMap.put(airportCode, Arrays.asList(airportName, country));
 
             updatedAirportMap.put("before", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
             updatedAirportMap.put("after", new AirportEntity(airportCode, airportName, country));
@@ -157,7 +155,7 @@ public class AirportController {
         //Body of ResponseEntity
         Map<String, AirportEntity> deletedAirportMap = new HashMap<>();
 
-        Map<String, List<String>> yourAirportMap = airportDataMemo.getAirportAllData(service);
+        Map<String, List<String>> yourAirportMap = service.getAllDataMap();
 
         List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
 
@@ -169,7 +167,7 @@ public class AirportController {
 
         } else {
 
-            airportDataMemo.removeFromAirportDataMap(airportCode);
+            yourAirportMap.remove(airportCode);
 
             return ResponseEntity.noContent().build();
 
