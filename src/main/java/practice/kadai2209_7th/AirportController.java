@@ -3,6 +3,7 @@ package practice.kadai2209_7th;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,115 +19,159 @@ import java.util.*;
 @RestController
 @RequestMapping("/airports")
 public class AirportController {
-    Map<String, List<String>> yourAirportMap = new HashMap<>();
 
-    private boolean hasAirportList = false;
-    @Autowired
-    private PortNumber portNum;
+
+    private final String NOT_FOUND_MESSAGE = "not found";
 
     @Autowired
     private AirportService service;
 
+
+    @ResponseStatus(code = HttpStatus.OK)
     @GetMapping("/airports")
-    public String getAirportList() {
+    public Map<String, List> getAirportList() {
 
-        if (!hasAirportList) {
+        //Body of ResponseEntity
+        Map<String, List> airportCodeMap = new LinkedHashMap<>();
 
-            yourAirportMap = service.getAllDataMap();
+        List<String> airportCodeList = service.getAllAirportCodeList();
 
-            hasAirportList = true;
-        }
+        airportCodeMap.put("message", List.of("You have airport codes listed here"));
+        airportCodeMap.put("airport", airportCodeList);
 
-        return "You have the list of airports";
+        return airportCodeMap;
     }
 
+
     @GetMapping("/search")
-    public ResponseEntity<List<String>> getAirports(
-            @RequestParam(value = "airportCode"/*, defaultValue = "KIX"*/) @Size(min = 3, max = 3, message = "Number of letters has to be 3")
-            String airportCode) {
+    public ResponseEntity<Map<String, AirportEntity>> getAirportMap(
+            @RequestParam(value = "airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode) {
 
-        if (yourAirportMap.isEmpty()) {
+        //Body of ResponseEntity
+        Map<String, AirportEntity> searchedAirportMap = new HashMap<>();
 
-            return ResponseEntity.ok(List.of("At first, go to ", "http://localhost:" + portNum.getPortNum() + "/airports"));
+        Map<String, List<String>> yourAirportMap = service.getAllDataMap();
+
+        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
+
+        searchedAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+
+        if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(searchedAirportMap);
+
+        } else {
+
+            return ResponseEntity.ok(searchedAirportMap);
+
         }
-
-        return ResponseEntity.ok(yourAirportMap.getOrDefault(airportCode, List.of(airportCode, " does not exist")));
-
     }
 
 
     @PostMapping("/create")
-    public ResponseEntity<String> createAirport(
-            @RequestParam(value = "airportCode", defaultValue = "NKM") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode,
-            @RequestParam(value = "airportName", defaultValue = "NAGOYA") @NotBlank(message = "Airport Name is required field") String airportName,
-            @RequestParam(value = "country", defaultValue = "JAPAN") @NotBlank(message = "Country is required field") String country) {
+    public ResponseEntity<Map<String, AirportEntity>> createAirport(
+            @RequestParam(value = "airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode,
+            @RequestParam(value = "airportName") @NotBlank(message = "Airport Name is required field") String airportName,
+            @RequestParam(value = "country") @NotBlank(message = "Country is required field") String country,
+            UriComponentsBuilder uriBuilder) {
 
-        if (yourAirportMap.isEmpty()) {
+        //Body of ResponseEntity
+        Map<String, AirportEntity> createdAirportMap = new HashMap<>();
 
-            return ResponseEntity.ok("At first, go to " + "http://localhost:" + portNum.getPortNum() + "/airports");
-        }
+        Map<String, List<String>> yourAirportMap = service.getAllDataMap();
 
-        if (yourAirportMap.get(airportCode) != null) {
+        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
 
-            return ResponseEntity.ok(airportCode + " already exists");
+        if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
+
+            yourAirportMap.put(airportCode, Arrays.asList(airportName, country));
+            createdAirportMap.put("airport", new AirportEntity(airportCode, airportName, country));
+
+            URI url = uriBuilder
+                    .path("/create/" + airportCode)
+                    .build()
+                    .toUri();
+
+            return ResponseEntity.created(url).body(createdAirportMap);
 
         } else {
 
-            yourAirportMap.putIfAbsent(airportCode, Arrays.asList(airportName, country));
+            createdAirportMap.put("airport", new AirportEntity(airportCode + "  ** Already exists **",
+                    airportInfoList.get(0), airportInfoList.get(1)));
+
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(createdAirportMap);
+
         }
 
-        URI url = UriComponentsBuilder.fromUriString("http://localhost:" + portNum.getPortNum())
-                .path("/create/" + airportCode)
-                .build()
-                .toUri();
-
-        return ResponseEntity.created(url).body(airportCode + ", " + airportName + ", " + country + " : successfully created");
     }
 
 
     @PatchMapping("/update/{airportCode}")
-    public ResponseEntity<Map<String, String>> updateAirport(
+    public ResponseEntity<Map<String, AirportEntity>> updateAirport(
             @PathVariable("airportCode") @NotNull String airportCode,
             @RequestParam("airportName") @NotBlank(message = "Airport Name is required field") String airportName,
             @RequestParam("country") @NotBlank(message = "Country is required field") String country) {
 
-        if (yourAirportMap.isEmpty()) {
-            return ResponseEntity.ok(Map.of("At first, go to ", "http://localhost:" + portNum.getPortNum() + "/airports"));
-        }
+        //Body of ResponseEntity
+        Map<String, AirportEntity> updatedAirportMap = new LinkedHashMap<>();
 
-        List<String> airportInfo = yourAirportMap.get(airportCode);
+        Map<String, List<String>> yourAirportMap = service.getAllDataMap();
 
-        if (airportInfo == null) {
+        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
 
-            return ResponseEntity.ok(Map.of(airportCode, "does not exist"));
+        if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
+
+            updatedAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(updatedAirportMap);
+
+        } else if (airportInfoList.equals(List.of(airportName, country))) {
+
+            updatedAirportMap.put("airport", new AirportEntity(airportCode,
+                    airportInfoList.get(0) + "  ** The same Airport Name **",
+                    airportInfoList.get(1) + "  ** The same Country **"));
+
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(updatedAirportMap);
 
         } else {
 
-            String airportInfoBefore = String.join(", ", airportInfo);
-
             yourAirportMap.put(airportCode, Arrays.asList(airportName, country));
 
-            return ResponseEntity.ok(Map.of("Was: " + airportInfoBefore,
-                    "IS: " + String.join(", ", yourAirportMap.get(airportCode)) + " Successfully updated"));
+            updatedAirportMap.put("before", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+            updatedAirportMap.put("after", new AirportEntity(airportCode, airportName, country));
+
+            return ResponseEntity.ok(updatedAirportMap);
+
         }
 
     }
 
 
     @DeleteMapping("/delete/{airportCode}")
-    public ResponseEntity<Map<String, String>> deleteAirport(
+    public ResponseEntity<Map<String, AirportEntity>> deleteAirport(
             @PathVariable("airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3")
             String airportCode) {
 
-        if (yourAirportMap.isEmpty()) {
-            return ResponseEntity.ok(Map.of("At first, go to ", "http://localhost:" + portNum.getPortNum() + "/airports in advance"));
-        }
+        //Body of ResponseEntity
+        Map<String, AirportEntity> deletedAirportMap = new HashMap<>();
 
-        if (yourAirportMap.get(airportCode) == null) {
-            return ResponseEntity.ok(Map.of(airportCode, "does not exist"));
-        }
+        Map<String, List<String>> yourAirportMap = service.getAllDataMap();
 
-        yourAirportMap.remove(airportCode);
-        return ResponseEntity.ok(Map.of("Airport Code: ", airportCode + " has been successfully deleted"));
+        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
+
+        if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
+
+            deletedAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deletedAirportMap);
+
+        } else {
+
+            yourAirportMap.remove(airportCode);
+
+            return ResponseEntity.noContent().build();
+
+        }
     }
+
 }
