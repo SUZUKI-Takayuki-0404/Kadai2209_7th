@@ -29,17 +29,9 @@ public class AirportController {
 
     @ResponseStatus(code = HttpStatus.OK)
     @GetMapping("/airports")
-    public Map<String, List> getAirportList() {
+    public GetAirportCodeResponse getAirportList() {
 
-        //Body of ResponseEntity
-        Map<String, List> airportCodeMap = new LinkedHashMap<>();
-
-        List<String> airportCodeList = service.getAllAirportCodeList();
-
-        airportCodeMap.put("message", List.of("You have airport codes listed here"));
-        airportCodeMap.put("airport", airportCodeList);
-
-        return airportCodeMap;
+        return new GetAirportCodeResponse("You have airport codes listed here", service.getAllAirportCodeList());
     }
 
 
