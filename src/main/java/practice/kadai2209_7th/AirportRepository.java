@@ -6,9 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class AirportRepository {
@@ -16,11 +14,23 @@ public class AirportRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public Map<String, Object> findByCode(String airportCode) {
+    public Optional<Map<String, Object>> findByCode(String airportCode) {
 
         String query = "SELECT * FROM airports WHERE airportCode=?";
 
-        return jdbcTemplate.queryForMap(query, airportCode);
+        Map<String, Object> foundAirport;
+
+        try {
+
+            foundAirport = jdbcTemplate.queryForMap(query, airportCode);
+
+        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+
+            foundAirport = null;
+
+        }
+
+        return Optional.ofNullable(foundAirport);
     }
 
     public List<String> findAllCode() {
