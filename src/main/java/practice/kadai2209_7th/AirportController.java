@@ -8,10 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import practice.kadai2209_7th.exceptionhandelers.AirportNotFoundException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 
@@ -36,27 +39,26 @@ public class AirportController {
 
 
     @GetMapping("/search")
-    public ResponseEntity<Map<String, AirportEntity>> getAirportMap(
+    public ResponseEntity<Map<String, AirportEntity>> getAirport(
             @RequestParam(value = "airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode) {
 
-        //Body of ResponseEntity
-        Map<String, AirportEntity> searchedAirportMap = new HashMap<>();
+        Map<String, AirportEntity> searchedAirport = Map.of("airport", service.getAirportEntity(airportCode));
 
-        Map<String, List<String>> yourAirportMap = service.getAllDataMap();
+        return ResponseEntity.ok(searchedAirport);
+    }
 
-        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
+    //Exception Handling in getAirport
+    @ExceptionHandler(value = AirportNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNoAirportFound(@NotNull AirportNotFoundException e, @NotNull HttpServletRequest request) {
 
-        searchedAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
+        Map<String, String> body = new HashMap<>();
+        body.put("timestamp", ZonedDateTime.now().toString());
+        body.put("status", String.valueOf(HttpStatus.NOT_FOUND.value()));
+        body.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
+        body.put("message", e.getMessage());
+        body.put("path", request.getRequestURI());
 
-        if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(searchedAirportMap);
-
-        } else {
-
-            return ResponseEntity.ok(searchedAirportMap);
-
-        }
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
 
