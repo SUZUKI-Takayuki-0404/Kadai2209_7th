@@ -3,6 +3,7 @@ package practice.kadai2209_7th;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
+import practice.kadai2209_7th.exceptionhandelers.AirportNotFoundException;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,13 +18,24 @@ public class AirportService {
 
     public AirportEntity getAirportEntity(String airport_code) {
 
-        Map<String, Object> map = repository.findByCode(airport_code);
+        String airportCode;
+        String airportName;
+        String country;
 
-        String airportCode = (String) map.get("airportCode");
-        String airportName = (String) map.get("airportName");
-        String country = (String) map.get("country");
+        if (repository.findByCode(airport_code).isPresent()) {
 
-        return new AirportEntity(airportCode, airportName, country);
+            Map<String, Object> map = repository.findByCode(airport_code).get();
+            airportCode = (String) map.get("airportCode");
+            airportName = (String) map.get("airportName");
+            country = (String) map.get("country");
+
+            return new AirportEntity(airportCode, airportName, country);
+
+        } else {
+
+            throw new AirportNotFoundException(airport_code + " Not Found");
+
+        }
     }
 
     public List<String> getAllAirportCodeList() {
