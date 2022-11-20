@@ -1,9 +1,6 @@
-package practice.kadai2209_7th;
-
-import org.jetbrains.annotations.NotNull;
+package practice.kadai22sep7th;
 
 import java.util.List;
-import java.util.Map;
 
 public class GetAirportCodeResponse {
 

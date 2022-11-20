@@ -1,4 +1,4 @@
-package practice.kadai2209_7th;
+package practice.kadai22sep7th;
 
 import lombok.Data;
 import org.springframework.data.relational.core.mapping.Table;

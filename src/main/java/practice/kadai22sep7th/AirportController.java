@@ -1,4 +1,4 @@
-package practice.kadai2209_7th;
+package practice.kadai22sep7th;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;

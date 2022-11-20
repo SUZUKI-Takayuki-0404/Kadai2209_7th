@@ -1,9 +1,9 @@
-package practice.kadai2209_7th;
+package practice.kadai22sep7th;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
-import practice.kadai2209_7th.exceptionhandelers.AirportNotFoundException;
+import practice.kadai22sep7th.exceptionhandelers.AirportNotFoundException;
 
 import java.util.Arrays;
 import java.util.HashMap;
