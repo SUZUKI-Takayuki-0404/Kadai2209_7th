@@ -1,26 +1,14 @@
 package practice.kadai22sep7th;
 
-import lombok.Data;
-import org.springframework.data.relational.core.mapping.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-
-@Data
-@Table(name = "airports")
+@AllArgsConstructor
+@Getter
 public class AirportEntity {
-
-    private String airportCode;
-
+    
+    private final String airportCode;
     private String airportName;
-
     private String country;
-
-    public AirportEntity() {
-    }
-
-    public AirportEntity(String airportCode, String airportName, String country) {
-        this.airportCode = airportCode;
-        this.airportName = airportName;
-        this.country = country;
-    }
 
 }
