@@ -1,44 +1,32 @@
 package practice.kadai22sep7th;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import practice.kadai22sep7th.exceptionhandelers.AirportNotFoundException;
+import practice.kadai22sep7th.mapper.AirportMapper;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@AllArgsConstructor
 @Service
 public class AirportService {
 
-    @Autowired
-    private AirportRepository repository;
+    private AirportMapper airportMapper;
 
-    public AirportEntity getAirportEntity(String airport_code) {
-
-        String airportCode;
-        String airportName;
-        String country;
-
-        if (repository.findByCode(airport_code).isPresent()) {
-            Map<String, Object> map = repository.findByCode(airport_code).get();
-            airportCode = (String) map.get("airportCode");
-            airportName = (String) map.get("airportName");
-            country = (String) map.get("country");
-            return new AirportEntity(airportCode, airportName, country);
-        } else {
-            throw new AirportNotFoundException(airport_code + " Not Found");
-        }
+    public AirportEntity getAirportEntity(String airportCode) {
+        return airportMapper.findById(airportCode).orElseThrow(() -> new AirportNotFoundException(airportCode + " Not Found"));
     }
 
     public List<String> getAllAirportCodeList() {
-        return repository.findAllCode();
+        return airportMapper.findAllCode();
     }
 
     public Map<String, List<String>> getAllDataMap() {
-        List<AirportEntity> allDataList = repository.findAllData();
+        List<AirportEntity> allDataList = airportMapper.findAll();
         Map<String, List<String>> allDataMap = new HashMap<>();
         allDataList.forEach(airportEntity -> {
             allDataMap.put(airportEntity.getAirportCode(),
