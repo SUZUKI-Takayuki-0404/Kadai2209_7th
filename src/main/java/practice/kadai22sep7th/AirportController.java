@@ -26,8 +26,8 @@ public class AirportController {
 
     @ResponseStatus(code = HttpStatus.OK)
     @GetMapping("/airports")
-    public GetAirportCodeResponse getAirportList() {
-        return new GetAirportCodeResponse("You have airport codes listed here", service.getAllAirportCodeList());
+    public AirportCodeResponse getAirportList() {
+        return new AirportCodeResponse("You have airport codes listed here", service.getAllAirportCodeList());
     }
 
     @GetMapping("/search")
