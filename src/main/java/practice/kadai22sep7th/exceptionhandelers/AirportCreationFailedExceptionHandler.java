@@ -27,6 +27,4 @@ public class AirportCreationFailedExceptionHandler extends ResponseEntityExcepti
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
-
-
 }
