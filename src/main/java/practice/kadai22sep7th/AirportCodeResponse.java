@@ -1,14 +1,10 @@
 package practice.kadai22sep7th;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 public class AirportCodeResponse {
 
     private String message;

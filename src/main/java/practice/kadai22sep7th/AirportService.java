@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class AirportService {
 
-    private AirportMapper airportMapper;
+    private final AirportMapper airportMapper;
 
     public AirportEntity getAirport(String airportCode) {
         return airportMapper.findById(airportCode).orElseThrow(() -> new AirportNotFoundException(airportCode + " Not Found"));

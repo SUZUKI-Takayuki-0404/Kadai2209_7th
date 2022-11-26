@@ -21,7 +21,7 @@ public class AirportController {
 
     private final String NOT_FOUND_MESSAGE = "not found";
 
-    private AirportService service;
+    private final AirportService service;
 
     @ResponseStatus(code = HttpStatus.OK)
     @GetMapping("/airports")
