@@ -50,7 +50,7 @@ public class AirportController {
         URI url = uriBuilder.path("/create/" + airportCode)
                 .build()
                 .toUri();
-        return ResponseEntity.created(url).body(new AirportResponse("airport", airportEntity));
+        return ResponseEntity.created(url).body(new AirportResponse("Successfully created", airportEntity));
     }
 
 //----Tentative Comment-out----
