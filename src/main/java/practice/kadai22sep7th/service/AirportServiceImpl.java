@@ -25,6 +25,7 @@ public class AirportServiceImpl implements AirportService {
         return airportMapper.findAll();
     }
 
+    @Override
     public AirportEntity createAirport(String airportCode, String airportName, String country) throws AirportCreationFailedException {
         try {
             airportMapper.create(airportCode, airportName, country);
