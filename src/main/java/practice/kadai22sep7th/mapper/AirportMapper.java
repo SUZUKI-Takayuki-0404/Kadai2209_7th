@@ -2,7 +2,7 @@ package practice.kadai22sep7th.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import practice.kadai22sep7th.AirportEntity;
+import practice.kadai22sep7th.entity.AirportEntity;
 
 import java.util.List;
 import java.util.Optional;

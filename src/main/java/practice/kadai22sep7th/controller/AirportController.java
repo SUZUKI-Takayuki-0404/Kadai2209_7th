@@ -1,4 +1,4 @@
-package practice.kadai22sep7th;
+package practice.kadai22sep7th.controller;
 
 import lombok.AllArgsConstructor;
 //import org.jetbrains.annotations.NotNull;
@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import practice.kadai22sep7th.entity.AirportEntity;
+import practice.kadai22sep7th.service.AirportService;
+import practice.kadai22sep7th.service.AirportServiceImpl;
 //import org.springframework.web.util.UriComponentsBuilder;
 
 //import javax.validation.constraints.NotBlank;
