@@ -1,5 +1,6 @@
 package practice.kadai22sep7th.mapper;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import practice.kadai22sep7th.entity.AirportEntity;
@@ -15,5 +16,8 @@ public interface AirportMapper {
 
     @Select("SELECT * FROM airports WHERE airportCode = #{airportCode}")
     Optional<AirportEntity> findById(String airportCode);
+
+    @Insert("INSERT INTO airports (airportCode, airportName, Country) VALUES (#{airportCode}, #{airportName}, #{Country})")
+    void create(String airportCode, String airportName, String Country);
 
 }
