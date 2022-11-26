@@ -1,20 +1,19 @@
 package practice.kadai22sep7th.controller;
 
 import lombok.AllArgsConstructor;
-//import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 import practice.kadai22sep7th.entity.AirportEntity;
+import practice.kadai22sep7th.exceptionhandelers.AirportCreationFailedException;
 import practice.kadai22sep7th.service.AirportService;
-import practice.kadai22sep7th.service.AirportServiceImpl;
-//import org.springframework.web.util.UriComponentsBuilder;
 
-//import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-//import java.net.URI;
-import java.util.*;
+import java.net.URI;
+import java.util.Map;
 
 @AllArgsConstructor
 @Validated
@@ -40,36 +39,21 @@ public class AirportController {
         return ResponseEntity.ok(searchedAirport);
     }
 
-//----Tentative Comment-out----
+    @PostMapping("/create")
+    public ResponseEntity<AirportResponse> createAirport(
+            @RequestParam(value = "airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode,
+            @RequestParam(value = "airportName") @NotBlank(message = "Airport Name is required field") String airportName,
+            @RequestParam(value = "country") @NotBlank(message = "Country is required field") String country,
+            UriComponentsBuilder uriBuilder) throws AirportCreationFailedException {
 
-//    @PostMapping("/create")
-//    public ResponseEntity<Map<String, AirportEntity>> createAirport(
-//            @RequestParam(value = "airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode,
-//            @RequestParam(value = "airportName") @NotBlank(message = "Airport Name is required field") String airportName,
-//            @RequestParam(value = "country") @NotBlank(message = "Country is required field") String country,
-//            UriComponentsBuilder uriBuilder) {
-//
-//        Map<String, AirportEntity> createdAirportMap = new HashMap<>();
-//        Map<String, List<String>> yourAirportMap = service.getAllDataMap();
-//        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
-//
-//        if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
-//            yourAirportMap.put(airportCode, Arrays.asList(airportName, country));
-//            createdAirportMap.put("airport", new AirportEntity(airportCode, airportName, country));
-//
-//            URI url = uriBuilder
-//                    .path("/create/" + airportCode)
-//                    .build()
-//                    .toUri();
-//
-//            return ResponseEntity.created(url).body(createdAirportMap);
-//        } else {
-//            createdAirportMap.put("airport", new AirportEntity(airportCode + "  ** Already exists **",
-//                    airportInfoList.get(0), airportInfoList.get(1)));
-//
-//            return ResponseEntity.status(HttpStatus.CONFLICT).body(createdAirportMap);
-//        }
-//    }
+        AirportEntity airportEntity = service.createAirport(airportCode, airportName, country);
+        URI url = uriBuilder.path("/create/" + airportCode)
+                .build()
+                .toUri();
+        return ResponseEntity.created(url).body(new AirportResponse("airport", airportEntity));
+    }
+
+//----Tentative Comment-out----
 //
 //    @PatchMapping("/update/{airportCode}")
 //    public ResponseEntity<Map<String, AirportEntity>> updateAirport(
