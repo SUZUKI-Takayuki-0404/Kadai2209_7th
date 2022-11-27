@@ -13,10 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class AirportCreationFailedExceptionHandler extends ResponseEntityExceptionHandler {
+public class DuplicateAirportCodeExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = AirportCreationFailedException.class)
-    public ResponseEntity<Map<String, String>> handleAirportCreationFailure(@NotNull AirportCreationFailedException e, @NotNull HttpServletRequest request) {
+    @ExceptionHandler(value = DuplicateAirportCodeException.class)
+    public ResponseEntity<Map<String, String>> handleAirportCodeDuplication(@NotNull DuplicateAirportCodeException e, @NotNull HttpServletRequest request) {
 
         Map<String, String> body = new HashMap<>();
         body.put("timestamp", ZonedDateTime.now().toString());

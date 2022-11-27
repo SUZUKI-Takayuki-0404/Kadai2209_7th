@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import practice.kadai22sep7th.entity.AirportEntity;
-import practice.kadai22sep7th.exceptionhandelers.AirportCreationFailedException;
+import practice.kadai22sep7th.exceptionhandelers.DuplicateAirportCodeException;
 import practice.kadai22sep7th.service.AirportService;
 
 import javax.validation.constraints.NotBlank;
@@ -44,7 +44,7 @@ public class AirportController {
             @RequestParam(value = "airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode,
             @RequestParam(value = "airportName") @NotBlank(message = "Airport Name is required field") String airportName,
             @RequestParam(value = "country") @NotBlank(message = "Country is required field") String country,
-            UriComponentsBuilder uriBuilder) throws AirportCreationFailedException {
+            UriComponentsBuilder uriBuilder) throws DuplicateAirportCodeException {
 
         AirportEntity airportEntity = service.createAirport(airportCode, airportName, country);
         URI url = uriBuilder.path("/create/" + airportCode)

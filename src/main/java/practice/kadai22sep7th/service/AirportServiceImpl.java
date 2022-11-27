@@ -1,10 +1,11 @@
 package practice.kadai22sep7th.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import practice.kadai22sep7th.entity.AirportEntity;
-import practice.kadai22sep7th.exceptionhandelers.AirportCreationFailedException;
 import practice.kadai22sep7th.exceptionhandelers.AirportNotFoundException;
+import practice.kadai22sep7th.exceptionhandelers.DuplicateAirportCodeException;
 import practice.kadai22sep7th.mapper.AirportMapper;
 
 import java.util.List;
@@ -26,11 +27,11 @@ public class AirportServiceImpl implements AirportService {
     }
 
     @Override
-    public AirportEntity createAirport(String airportCode, String airportName, String country) throws AirportCreationFailedException {
+    public AirportEntity createAirport(String airportCode, String airportName, String country) throws DuplicateAirportCodeException {
         try {
-            airportMapper.create(airportCode, airportName, country);
-        } catch (Exception e) {
-            throw new AirportCreationFailedException("Creation failed. Check Airport Code Duplication.");
+            airportMapper.insert(airportCode, airportName, country);
+        } catch (DuplicateKeyException e) {
+            throw new DuplicateAirportCodeException("Creation failed. Check Airport Code Duplication.");
         }
         return new AirportEntity(airportCode, airportName, country);
     }

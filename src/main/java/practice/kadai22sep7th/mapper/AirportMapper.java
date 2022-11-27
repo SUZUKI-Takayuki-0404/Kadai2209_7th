@@ -17,7 +17,7 @@ public interface AirportMapper {
     @Select("SELECT * FROM airports WHERE airportCode = #{airportCode}")
     Optional<AirportEntity> findById(String airportCode);
 
-    @Insert("INSERT INTO airports (airportCode, airportName, Country) VALUES (#{airportCode}, #{airportName}, #{Country})")
-    void create(String airportCode, String airportName, String Country);
+    @Insert("INSERT INTO airports (airportCode, airportName, Country) VALUES (#{airportCode}, #{airportName}, #{country})")
+    void insert(String airportCode, String airportName, String country);
 
 }

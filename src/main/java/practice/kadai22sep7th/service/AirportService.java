@@ -1,7 +1,7 @@
 package practice.kadai22sep7th.service;
 
 import practice.kadai22sep7th.entity.AirportEntity;
-import practice.kadai22sep7th.exceptionhandelers.AirportCreationFailedException;
+import practice.kadai22sep7th.exceptionhandelers.DuplicateAirportCodeException;
 
 import java.util.List;
 
@@ -11,6 +11,6 @@ public interface AirportService {
 
     public List<AirportEntity> getAllAirports();
 
-    public AirportEntity createAirport(String airportCode, String airportName, String country) throws AirportCreationFailedException;
+    public AirportEntity createAirport(String airportCode, String airportName, String country) throws DuplicateAirportCodeException;
 
 }
