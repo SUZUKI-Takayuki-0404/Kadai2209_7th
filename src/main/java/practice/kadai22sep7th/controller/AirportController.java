@@ -10,7 +10,6 @@ import practice.kadai22sep7th.entity.AirportEntity;
 import practice.kadai22sep7th.exceptionhandelers.DuplicateAirportCodeException;
 import practice.kadai22sep7th.service.AirportService;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.net.URI;
 import java.util.Map;
@@ -41,12 +40,11 @@ public class AirportController {
 
     @PostMapping("/create")
     public ResponseEntity<AirportResponse> createAirport(
-            @RequestParam(value = "airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode,
-            @RequestParam(value = "airportName") @NotBlank(message = "Airport Name is required field") String airportName,
-            @RequestParam(value = "country") @NotBlank(message = "Country is required field") String country,
-            UriComponentsBuilder uriBuilder) throws DuplicateAirportCodeException {
+            @RequestBody @Validated CreateAirportForm createAirportForm, UriComponentsBuilder uriBuilder)
+            throws DuplicateAirportCodeException {
 
-        AirportEntity airportEntity = service.createAirport(airportCode, airportName, country);
+        String airportCode = createAirportForm.getAirportCode();
+        AirportEntity airportEntity = service.createAirport(airportCode, createAirportForm.getAirportName(), createAirportForm.getCountry());
         URI url = uriBuilder.path("/create/" + airportCode)
                 .build()
                 .toUri();

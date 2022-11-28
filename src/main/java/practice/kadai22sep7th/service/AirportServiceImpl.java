@@ -29,7 +29,7 @@ public class AirportServiceImpl implements AirportService {
     @Override
     public AirportEntity createAirport(String airportCode, String airportName, String country) throws DuplicateAirportCodeException {
         try {
-            airportMapper.insert(airportCode, airportName, country);
+            airportMapper.create(airportCode, airportName, country);
         } catch (DuplicateKeyException e) {
             throw new DuplicateAirportCodeException("Airport code duplication must be avoided");
         }

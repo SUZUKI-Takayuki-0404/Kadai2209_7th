@@ -18,6 +18,6 @@ public interface AirportMapper {
     Optional<AirportEntity> findById(String airportCode);
 
     @Insert("INSERT INTO airports (airportCode, airportName, Country) VALUES (#{airportCode}, #{airportName}, #{country})")
-    void insert(String airportCode, String airportName, String country);
+    void create(String airportCode, String airportName, String country);
 
 }
