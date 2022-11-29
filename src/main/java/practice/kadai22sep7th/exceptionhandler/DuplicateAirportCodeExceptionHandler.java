@@ -23,6 +23,7 @@ public class DuplicateAirportCodeExceptionHandler extends ResponseEntityExceptio
         body.put("status", String.valueOf(HttpStatus.CONFLICT.value()));
         body.put("error", HttpStatus.CONFLICT.getReasonPhrase());
         body.put("message", e.getMessage());
+        body.put("cause", e.getCause().toString());
         body.put("path", request.getRequestURI());
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
