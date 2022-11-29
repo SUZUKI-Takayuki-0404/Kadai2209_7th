@@ -13,10 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class AirportNotChangedExceptionHandler extends ResponseEntityExceptionHandler {
+public class SameAsCurrentAirportExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = AirportNotChangedException.class)
-    public ResponseEntity<Map<String, String>> handleNoChangedOfAirport(@NotNull AirportNotChangedException e, @NotNull HttpServletRequest request) {
+    @ExceptionHandler(value = SameAsCurrentAirportException.class)
+    public ResponseEntity<Map<String, String>> handleNoChangedOfAirport(@NotNull SameAsCurrentAirportException e, @NotNull HttpServletRequest request) {
 
         Map<String, String> body = new HashMap<>();
         body.put("timestamp", ZonedDateTime.now().toString());

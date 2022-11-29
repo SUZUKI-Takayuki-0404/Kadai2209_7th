@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import practice.kadai22sep7th.entity.AirportEntity;
-import practice.kadai22sep7th.exceptionhandler.AirportNotChangedException;
 import practice.kadai22sep7th.exceptionhandler.AirportNotFoundException;
 import practice.kadai22sep7th.exceptionhandler.DuplicateAirportCodeException;
+import practice.kadai22sep7th.exceptionhandler.SameAsCurrentAirportException;
 import practice.kadai22sep7th.mapper.AirportMapper;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public class AirportServiceImpl implements AirportService {
     public AirportEntity updateAirport(String airportCode, String airportName, String country) {
         AirportEntity airportEntity = this.getAirport(airportCode);
         if (airportEntity.getAirportName().equals(airportName) && airportEntity.getCountry().equals(country)) {
-            throw new AirportNotChangedException("No change of AirportName and Country");
+            throw new SameAsCurrentAirportException("No change of AirportName and Country");
         } else {
             airportMapper.update(airportCode, airportName, country);
             return new AirportEntity(airportCode, airportName, country);
