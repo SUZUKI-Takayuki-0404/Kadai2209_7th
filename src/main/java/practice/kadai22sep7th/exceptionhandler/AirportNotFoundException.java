@@ -1,4 +1,4 @@
-package practice.kadai22sep7th.exceptionhandelers;
+package practice.kadai22sep7th.exceptionhandler;
 
 public class AirportNotFoundException extends RuntimeException {
 

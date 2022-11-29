@@ -1,4 +1,4 @@
-package practice.kadai22sep7th.exceptionhandelers;
+package practice.kadai22sep7th.exceptionhandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;

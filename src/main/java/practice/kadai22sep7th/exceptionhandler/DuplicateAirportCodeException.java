@@ -1,8 +1,9 @@
-package practice.kadai22sep7th.exceptionhandelers;
+package practice.kadai22sep7th.exceptionhandler;
 
 public class DuplicateAirportCodeException extends Exception {
 
     public DuplicateAirportCodeException() {
+        super();
     }
 
     public DuplicateAirportCodeException(String message, Throwable cause) {
