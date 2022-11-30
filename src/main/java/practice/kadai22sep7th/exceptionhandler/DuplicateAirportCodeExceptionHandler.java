@@ -11,19 +11,24 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestControllerAdvice
 public class DuplicateAirportCodeExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private final static Logger logger = Logger.getLogger(DuplicateAirportCodeExceptionHandler.class.getName());
+
     @ExceptionHandler(value = DuplicateAirportCodeException.class)
     public ResponseEntity<Map<String, String>> handleAirportCodeDuplication(@NotNull DuplicateAirportCodeException e, @NotNull HttpServletRequest request) {
+
+        logger.log(Level.SEVERE, "Exception was thrown due to AirportCode Duplication", e);
 
         Map<String, String> body = new HashMap<>();
         body.put("timestamp", ZonedDateTime.now().toString());
         body.put("status", String.valueOf(HttpStatus.CONFLICT.value()));
         body.put("error", HttpStatus.CONFLICT.getReasonPhrase());
         body.put("message", e.getMessage());
-        body.put("cause", e.getCause().toString());
         body.put("path", request.getRequestURI());
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
