@@ -1,6 +1,7 @@
-package practice.kadai22sep7th;
+package practice.kadai22sep7th.controller;
 
 import lombok.Data;
+import practice.kadai22sep7th.entity.AirportEntity;
 
 import java.util.List;
 
