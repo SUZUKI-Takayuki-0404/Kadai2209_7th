@@ -1,9 +1,6 @@
 ## 概要
 空港コード、空港名、所在国のテーブルを題材に、以下を実装する。
 
-## 概要
-空港コード、空港名、所在国のテーブルを題材に、以下を実装する。
-
 1.空港コードから空港名と所在国を呼び出し（GET）
 ![image](https://user-images.githubusercontent.com/113277395/205448819-b681a1a0-6e75-447d-9135-fcaff057c71c.png)
 --
@@ -25,11 +22,6 @@
 --
 
 ## 主なソースファイルの説明
-
-＜パッケージ構成＞
- 
-![image](https://user-images.githubusercontent.com/113277395/205440416-915cc6d1-d22e-4e07-92cc-44bc84fb1f04.png)
-
 ・AirportController.java
 　RESTControllerを実装。
 
@@ -41,4 +33,7 @@
 
 ・AirportEntitiy.java
 　個々の空港のデータ構成を定義する。
-
+ 
+＜パッケージ構成＞
+ 
+![image](https://user-images.githubusercontent.com/113277395/205440416-915cc6d1-d22e-4e07-92cc-44bc84fb1f04.png)
