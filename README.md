@@ -37,6 +37,6 @@
 ・AirportMapper.java
 　data.sqlに登録されている空港コード、空港名、所在国のデータベースをSQLを使って取得する。
 
-・AirportEntitiy
+・AirportEntitiy.java
 　個々の空港のデータ構成を定義する。
 
