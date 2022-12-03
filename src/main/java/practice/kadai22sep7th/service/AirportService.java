@@ -15,4 +15,6 @@ public interface AirportService {
 
     public AirportEntity updateAirport(String airportCode, String airportName, String country);
 
+    public void deleteAirport(String airportCode);
+
 }

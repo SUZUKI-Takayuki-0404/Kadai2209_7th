@@ -48,4 +48,10 @@ public class AirportServiceImpl implements AirportService {
         }
     }
 
+    @Override
+    public void deleteAirport(String airportCode) {
+        this.getAirport(airportCode);
+        airportMapper.deleteById(airportCode);
+    }
+
 }
