@@ -57,25 +57,12 @@ public class AirportController {
         return ResponseEntity.ok(new AirportResponse("Successfully updated", airportEntity));
     }
 
-//----Tentative Comment-out----
-//    @DeleteMapping("/delete/{airportCode}")
-//    public ResponseEntity<Map<String, AirportEntity>> deleteAirport(
-//            @PathVariable("airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3")
-//            String airportCode) {
-//
-//        Map<String, AirportEntity> deletedAirportMap = new HashMap<>();
-//        Map<String, List<String>> yourAirportMap = service.getAllDataMap();
-//        List<String> airportInfoList = yourAirportMap.getOrDefault(airportCode, List.of(NOT_FOUND_MESSAGE, NOT_FOUND_MESSAGE));
-//
-//        if (airportInfoList.get(0).equals(NOT_FOUND_MESSAGE)) {
-//            deletedAirportMap.put("airport", new AirportEntity(airportCode, airportInfoList.get(0), airportInfoList.get(1)));
-//
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deletedAirportMap);
-//        } else {
-//            yourAirportMap.remove(airportCode);
-//
-//            return ResponseEntity.noContent().build();
-//        }
-//    }
+    @DeleteMapping("/delete/{airportCode}")
+    public ResponseEntity<Void> deleteAirport(
+            @PathVariable("airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode) {
+
+        service.deleteAirport(airportCode);
+        return ResponseEntity.noContent().build();
+    }
 
 }
