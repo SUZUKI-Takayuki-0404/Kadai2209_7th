@@ -1,9 +1,6 @@
 package practice.kadai22sep7th.mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import practice.kadai22sep7th.entity.AirportEntity;
 
 import java.util.List;
@@ -23,4 +20,8 @@ public interface AirportMapper {
 
     @Update("UPDATE airports SET airportName = #{airportName}, country = #{country} WHERE airportCode = #{airportCode}")
     boolean update(String airportCode, String airportName, String country);
+
+    @Delete("DELETE FROM airports WHERE airportCode = #{airportCode}")
+    boolean deleteById(String airportCode);
+
 }
