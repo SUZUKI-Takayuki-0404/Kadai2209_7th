@@ -22,7 +22,7 @@ public class DuplicateAirportCodeExceptionHandler extends ResponseEntityExceptio
     @ExceptionHandler(value = DuplicateAirportCodeException.class)
     public ResponseEntity<Map<String, String>> handleAirportCodeDuplication(@NotNull DuplicateAirportCodeException e, @NotNull HttpServletRequest request) {
 
-        logger.log(Level.INFO, "Exception was thrown due to AirportCode Duplication", e);
+        logger.log(Level.INFO, "Exception was thrown due to AirportCode Duplication but properly handled", e);
 
         Map<String, String> body = new HashMap<>();
         body.put("timestamp", ZonedDateTime.now().toString());
