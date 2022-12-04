@@ -1,6 +1,10 @@
 package practice.kadai22sep7th.mapper;
 
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import practice.kadai22sep7th.entity.AirportEntity;
 
 import java.util.List;
