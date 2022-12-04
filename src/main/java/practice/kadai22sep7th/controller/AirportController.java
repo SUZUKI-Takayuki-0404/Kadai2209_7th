@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,40 +24,37 @@ import java.net.URI;
 @AllArgsConstructor
 @Validated
 @RestController
-@RequestMapping("/airports")
 public class AirportController {
-
-    private final String NOT_FOUND_MESSAGE = "not found";
 
     private final AirportService service;
 
     @ResponseStatus(code = HttpStatus.OK)
-    @GetMapping("/airports")
+    @GetMapping("/airport_codes")
     public AirportCodeResponse getAirportList() {
         return new AirportCodeResponse("You have airport codes listed here", service.getAllAirports());
     }
 
-    @GetMapping("/search")
+    @GetMapping("/airports")
     public ResponseEntity<AirportResponse> getAirport(
             @RequestParam(value = "airportCode") @Size(min = 3, max = 3, message = "Number of letters has to be 3") String airportCode) {
 
         return ResponseEntity.ok(new AirportResponse("airport", service.getAirport(airportCode)));
     }
 
-    @PostMapping("/create")
+    @PostMapping("/airports")
     public ResponseEntity<AirportResponse> createAirport(
             @RequestBody @Validated CreateAirportForm createAirportForm, UriComponentsBuilder uriBuilder)
             throws DuplicateAirportCodeException {
 
         String airportCode = createAirportForm.getAirportCode();
         AirportEntity airportEntity = service.createAirport(airportCode, createAirportForm.getAirportName(), createAirportForm.getCountry());
-        URI url = uriBuilder.path("/create/" + airportCode)
+        URI url = uriBuilder.path("/" + airportCode)
                 .build()
                 .toUri();
         return ResponseEntity.created(url).body(new AirportResponse("Successfully created", airportEntity));
     }
 
-    @PatchMapping("/update/{airportCode}")
+    @PatchMapping("/airports/{airportCode}")
     public ResponseEntity<AirportResponse> updateAirport(@RequestBody @Validated UpdateAirportForm updateAirportForm) {
 
         AirportEntity airportEntity = service.updateAirport(
