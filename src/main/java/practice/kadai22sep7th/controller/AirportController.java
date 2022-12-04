@@ -29,7 +29,7 @@ public class AirportController {
     private final AirportService service;
 
     @ResponseStatus(code = HttpStatus.OK)
-    @GetMapping("/airport_codes")
+    @GetMapping("/airport-codes")
     public AirportCodeResponse getAirportList() {
         return new AirportCodeResponse("You have airport codes listed here", service.getAllAirports());
     }
