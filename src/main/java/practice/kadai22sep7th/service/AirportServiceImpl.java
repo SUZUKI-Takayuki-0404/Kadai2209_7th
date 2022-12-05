@@ -39,7 +39,7 @@ public class AirportServiceImpl implements AirportService {
 
     @Override
     public AirportEntity updateAirport(String airportCode, String airportName, String country) {
-        AirportEntity airportEntity = this.getAirport(airportCode);
+        AirportEntity airportEntity = airportMapper.findById(airportCode).orElseThrow(() -> new AirportNotFoundException(airportCode + " Not Found"));
         if (airportEntity.getAirportName().equals(airportName) && airportEntity.getCountry().equals(country)) {
             throw new SameAsCurrentAirportException("No change of AirportName and Country");
         } else {
@@ -50,8 +50,11 @@ public class AirportServiceImpl implements AirportService {
 
     @Override
     public void deleteAirport(String airportCode) {
-        this.getAirport(airportCode);
-        airportMapper.deleteById(airportCode);
+        if (airportMapper.findById(airportCode).isPresent()) {
+            airportMapper.deleteById(airportCode);
+        } else {
+            throw new AirportNotFoundException(airportCode + " Not Found");
+        }
     }
 
 }
